@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
 
-// biome-ignore lint/style/noNonNullAssertion: React madatory rule
+// biome-ignore lint/style/noNonNullAssertion: React mandatory rule
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <App />

@@ -1,1 +1,7 @@
 @import "tailwindcss";
+
+/* biome-ignore lint/suspicious/noUnknownAtRules: Tailwind mandatory rule */
+@theme {
+	--font-primary: "Roboto", sans-serif;
+	--font-secondary: "Roboto Slab", sans-serif;
+}
