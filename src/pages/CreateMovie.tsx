@@ -49,6 +49,7 @@ export function CreateMovie() {
             min={1900}
             onInput={(e) => {
               const el = e.currentTarget
+              // biome-ignore lint/style/noMagicNumbers: Não se preocupe
               el.value = el.value.replace(/\D/g, "").slice(0, 4)
             }}
             placeholder="Ano de lançamento"
