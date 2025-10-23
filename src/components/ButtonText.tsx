@@ -9,7 +9,7 @@ type ButtonTextProps = {
 export function ButtonText({ icon: Icon, title }: ButtonTextProps) {
 	return (
 		<Link
-			to="/"
+      to="/"
 			className="bg-none text-[#FF859B] border-0 text-base inline-flex items-center gap-2 [&_svg]:text-[#FF859B]"
 		>
 			{Icon && <Icon size={20} />}

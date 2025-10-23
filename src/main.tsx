@@ -7,8 +7,13 @@ import { App } from "./App"
 import { CreateMovie } from "./pages/CreateMovie"
 import { Details } from "./pages/Details"
 import { Home } from "./pages/Home"
+import { SiginIn } from "./pages/SiginIn"
 
 const router = createBrowserRouter([
+  {
+    path: "/siginin",
+    element: <SiginIn />
+  },
   {
     path: "/",
     element: <App />,
