@@ -6,6 +6,8 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom"
 import { App } from "./App"
 import { CreateMovie } from "./pages/CreateMovie"
 import { Details } from "./pages/Details"
+import { Perfil } from "./pages/Perfil"
+import { UserProvider } from "./contexts/UserContext"
 import { Home } from "./pages/Home"
 
 const router = createBrowserRouter([
@@ -25,6 +27,10 @@ const router = createBrowserRouter([
         path: "/criarfilme",
         element: <CreateMovie />,
       },
+      {
+        path: "/perfil",
+        element: <Perfil />,
+      },
     ],
   },
 ])
@@ -32,6 +38,8 @@ const router = createBrowserRouter([
 // biome-ignore lint/style/noNonNullAssertion: React mandatory rule
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <UserProvider>
+      <RouterProvider router={router} />
+    </UserProvider>
   </StrictMode>
 )
