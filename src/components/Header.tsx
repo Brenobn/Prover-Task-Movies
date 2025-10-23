@@ -4,7 +4,7 @@ import { Input } from "./Input"
 export function Header() {
   return (
     <div className="flex justify-between bg-[#1C1B1E] py-6 px-32 w-full border border-b border-b-[#3E3B47]">
-      <div className="flex w-full py-[24px] px-[70px] items-center gap-16">
+      <div className="flex w-full py-6 px-[70px] items-center gap-16">
         <h1 className="text-[#FF859B] font-bold font-secondary text-2xl">Movies</h1>
         <Input />
         <div className="inline-flex h-16 items-center gap-2.5">
