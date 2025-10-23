@@ -1,20 +1,47 @@
 /** biome-ignore-all lint/a11y/useValidAnchor: Never mind */
+/** biome-ignore-all lint/performance/noImgElement: ok */
+/** biome-ignore-all lint/style/useFilenamingConvention: ok */
+import { Link } from "react-router-dom"
+import { useUser } from "../contexts/UserContext"
 import { Input } from "./Input"
 
 export function Header() {
+  const { user } = useUser()
+
   return (
-    <div className="flex justify-between bg-[#1C1B1E] py-6 px-32 w-full border border-b border-b-[#3E3B47]">
-      <div className="flex w-full py-6 px-[70px] items-center gap-16">
-        <h1 className="text-[#FF859B] font-bold font-secondary text-2xl">Movies</h1>
+    <div className="flex w-full justify-between border border-b border-b-[#3E3B47] bg-[#1C1B1E] px-32 py-6">
+      <div className="flex w-full items-center gap-16 px-[70px] py-6">
+        <h1 className="font-bold font-secondary text-2xl text-[#FF859B]">
+          Movies
+        </h1>
         <Input />
         <div className="inline-flex h-16 items-center gap-2.5">
           <div className="inline-flex flex-col items-end">
-            <a href="#" className="text-white font-secondary text-sm font-bold no-underline">Breno</a>
-            <a href="#" className="text-[#948F99] font-secondary text-sm font-normal">sair</a>
+            <a
+              className="font-bold font-secondary text-sm text-white no-underline"
+              href="#"
+            >
+              {user.name}
+            </a>
+            <a
+              className="font-normal font-secondary text-[#948F99] text-sm"
+              href="#"
+            >
+              sair
+            </a>
           </div>
 
-          {/** biome-ignore lint/a11y/useAltText: Never mind */}
-          <img src="https://github.com/Brenobn.png" className="w-16 h-16 rounded-4xl border-[#3e3b47]"/>
+          <Link
+            aria-label="Abrir perfil"
+            className="inline-block cursor-pointer"
+            to="/perfil"
+          >
+            <div className="h-16 w-16 overflow-hidden rounded-full">
+              {/** biome-ignore lint/a11y/useAltText: Never mind */}
+              {/** biome-ignore lint/nursery/useImageSize: ok */}
+              <img className="h-full w-full object-cover" src={user.avatar} />
+            </div>
+          </Link>
         </div>
       </div>
     </div>
