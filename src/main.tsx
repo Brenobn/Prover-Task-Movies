@@ -11,8 +11,13 @@ import { Perfil } from "./pages/Perfil"
 import { UserProvider } from "./contexts/UserContext"
 import { Home } from "./pages/Home"
 import { SiginIn } from "./pages/SiginIn"
+import { SiginUp } from "./pages/SinginUp"
 
 const router = createBrowserRouter([
+  {
+    path: "/siginup",
+    element: <SiginUp />,
+  },
   {
     path: "/siginin",
     element: <SiginIn />,
