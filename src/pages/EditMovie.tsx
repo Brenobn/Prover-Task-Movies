@@ -81,7 +81,7 @@ export function EditMovie() {
   }
 
   if (!user) {
-    return <Navigate to="/siginin" replace />
+    return <Navigate to="/signin" replace />
   }
 
   if (loading) {

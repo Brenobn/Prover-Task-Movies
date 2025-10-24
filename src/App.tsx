@@ -8,7 +8,7 @@ export function App() {
 	const hideHeader = location.pathname === "/perfil";
 
 	if (!user) {
-		return <Navigate to="/siginin" replace state={{ from: location }} />;
+		return <Navigate to="/signin" replace state={{ from: location }} />;
 	}
 
 	return (

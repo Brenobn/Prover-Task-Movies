@@ -11,7 +11,7 @@ export function Header() {
 
   function handleSignOut() {
     logout()
-    navigate("/siginin", { replace: true })
+    navigate("/signin", { replace: true })
   }
 
   return (

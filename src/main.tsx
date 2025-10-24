@@ -11,17 +11,17 @@ import { EditMovie } from "./pages/EditMovie"
 import { Perfil } from "./pages/Perfil"
 import { UserProvider } from "./contexts/UserContext"
 import { Home } from "./pages/Home"
-import { SiginIn } from "./pages/SignIn"
-import { SiginUp } from "./pages/SinginUp"
+import { SignIn } from "./pages/SignIn"
+import { SignUp } from "./pages/SingnUp"
 
 const router = createBrowserRouter([
   {
-    path: "/siginup",
-    element: <SiginUp />,
+    path: "/signup",
+    element: <SignUp />,
   },
   {
-    path: "/siginin",
-    element: <SiginIn />,
+    path: "/signin",
+    element: <SignIn />,
   },
   {
     path: "/",

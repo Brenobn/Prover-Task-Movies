@@ -19,7 +19,7 @@ export function CreateMovie() {
   const [error, setError] = useState<string | null>(null)
 
   if (!user) {
-    return <Navigate to="/siginin" replace />
+    return <Navigate to="/signin" replace />
   }
 
   function addTag() {

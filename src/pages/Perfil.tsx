@@ -29,7 +29,7 @@ export function Perfil() {
   }, [user])
 
   if (!user) {
-    return <Navigate to="/siginin" replace />
+    return <Navigate to="/signin" replace />
   }
 
   const currentUser = user

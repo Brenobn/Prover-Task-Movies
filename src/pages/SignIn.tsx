@@ -8,7 +8,7 @@ import { Input } from "../components/Input"
 import { useUser } from "../contexts/UserContext"
 import { loginUser } from "../services/auth"
 
-export function SiginIn() {
+export function SignIn() {
   const { user, setUser } = useUser()
   const navigate = useNavigate()
   const [email, setEmail] = useState("")
@@ -77,7 +77,7 @@ export function SiginIn() {
 
         <Button title={loading ? "Entrando..." : "Entrar"} type="submit" disabled={loading} />
 
-        <ButtonText title="Criar conta" to="/siginup" />
+        <ButtonText title="Criar conta" to="/signup" />
       </form>
       <div
         className="flex-1 bg-cover bg-center bg-no-repeat"

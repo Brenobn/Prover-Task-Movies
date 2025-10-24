@@ -8,8 +8,8 @@ import { Input } from "../components/Input"
 import { useUser } from "../contexts/UserContext"
 import { registerUser } from "../services/auth"
 
-export function SiginUp() {
-  const { user, setUser } = useUser()
+export function SignUp() {
+  const { user } = useUser()
   const navigate = useNavigate()
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
@@ -32,9 +32,9 @@ export function SiginUp() {
 
     setLoading(true)
     try {
-      const created = await registerUser({ name, email, password })
-      setUser(created)
-      navigate("/", { replace: true })
+      await registerUser({ name, email, password })
+
+      navigate("/signin", { replace: true })
     } catch (err) {
       setError(err instanceof Error ? err.message : "Nao foi possivel cadastrar")
     } finally {
@@ -85,7 +85,7 @@ export function SiginUp() {
 
         <Button title={loading ? "Cadastrando..." : "Cadastrar"} type="submit" disabled={loading} />
 
-        <ButtonText icon={FiArrowLeft} title="Voltar para o login" to="/siginin" />
+        <ButtonText icon={FiArrowLeft} title="Voltar para o login" to="/signin" />
       </form>
       <div
         className="flex-1 bg-cover bg-center bg-no-repeat"
