@@ -12,7 +12,7 @@ import { Perfil } from "./pages/Perfil"
 import { UserProvider } from "./contexts/UserContext"
 import { Home } from "./pages/Home"
 import { SignIn } from "./pages/SignIn"
-import { SignUp } from "./pages/SingnUp"
+import { SignUp } from "./pages/SignUp"
 
 const router = createBrowserRouter([
   {
