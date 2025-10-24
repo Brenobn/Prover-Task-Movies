@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { GoArrowLeft } from "react-icons/go"
-import { useParams } from "react-router-dom"
+import { Link, useParams } from "react-router-dom"
 import { ButtonText } from "../components/ButtonText"
 import { StarRating } from "../components/StarRating"
 import { Tag } from "../components/Tag"
@@ -18,7 +18,7 @@ export function Details() {
 
   useEffect(() => {
     if (!movieId) {
-      setError("Filme não encontrado")
+      setError("Filme nao encontrado")
       setLoading(false)
       return
     }
@@ -31,7 +31,7 @@ export function Details() {
         setMovie(data)
         setUserRating(0)
       })
-      .catch((err: unknown) => {
+      .catch((err) => {
         setError(err instanceof Error ? err.message : "Erro ao carregar filme")
       })
       .finally(() => setLoading(false))
@@ -41,7 +41,7 @@ export function Details() {
 
   async function handleSubmitRating() {
     if (!movieId) {
-      setSubmitError("Filme não encontrado")
+      setSubmitError("Filme nao encontrado")
       return
     }
     if (userRating < 1 || userRating > 5) {
@@ -54,9 +54,11 @@ export function Details() {
     setSubmitSuccess(null)
     try {
       await submitMovieRating(movieId, userRating)
-      setSubmitSuccess("Avaliação enviada!")
+      setSubmitSuccess("Avaliacao enviada!")
+      setMovie((prev) => (prev ? { ...prev, rating: userRating } : prev))
+      setUserRating(0)
     } catch (err) {
-      setSubmitError(err instanceof Error ? err.message : "Não foi possível registrar sua avaliação")
+      setSubmitError(err instanceof Error ? err.message : "Nao foi possivel registrar sua avaliacao")
     } finally {
       setSubmitting(false)
     }
@@ -65,38 +67,49 @@ export function Details() {
   return (
     <div className="mx-auto my-10 flex max-w-6xl flex-col gap-10">
       <div className="flex items-center gap-2">
-        {/** biome-ignore assist/source/useSortedAttributes: ok */}
-        <ButtonText title="Voltar" icon={GoArrowLeft} />
+        <ButtonText title="Voltar" icon={GoArrowLeft} to="/" />
       </div>
 
-      {loading && (
-        <p className="font-primary text-[#999591] text-base">Carregando filme...</p>
-      )}
+      {loading && <p className="font-primary text-base text-[#999591]">Carregando filme...</p>}
       {error && <p className="font-primary text-base text-red-400">{error}</p>}
 
-      {!(loading || error ) && movie && (
+      {!loading && !error && movie && (
         <>
-          <div className="inline-flex flex-row items-center">
-            <h1 className="mr-5 font-medium font-secondary text-4xl text-white">
-              {movie.title}
-            </h1>
-            <div className="flex items-center gap-2">
-              <StarRating value={movie.rating} size={24} />
-              <span className="font-medium text-[#FF859B] text-sm">
-                {movie.rating.toFixed(1)}
-              </span>
+          <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+            <div className="inline-flex flex-col gap-3">
+              <div className="inline-flex flex-row items-center gap-4">
+                <h1 className="font-secondary text-4xl font-medium text-white">
+                  {movie.title}
+                </h1>
+                <div className="flex items-center gap-2">
+                  <StarRating value={movie.rating} size={24} />
+                  <span className="text-sm font-medium text-[#FF859B]">
+                    {movie.rating.toFixed(1)}
+                  </span>
+                </div>
               </div>
+              {movie.year ? (
+                <span className="text-sm text-[#999591]">Lancamento: {movie.year}</span>
+              ) : null}
+            </div>
+
+            <Link
+              className="inline-flex h-11 items-center justify-center rounded-lg bg-[#FF859B] px-6 font-medium text-[#3E3B47] no-underline"
+              to={`/editarfilme/${movie.id}`}
+            >
+              Editar filme
+            </Link>
           </div>
 
           {movie.tags.length > 0 && (
-            <div className="inline-flex items-start gap-2">
+            <div className="inline-flex flex-wrap items-start gap-2">
               {movie.tags.map((tag) => (
                 <Tag key={tag} label={tag} />
               ))}
             </div>
           )}
 
-          <p className="font-normal font-secondary text-base text-white">
+          <p className="font-secondary text-base font-normal text-white">
             {movie.description}
           </p>
 
@@ -105,7 +118,7 @@ export function Details() {
               O que achou do filme?
             </h2>
             <p className="mt-1 text-sm text-[#999591]">
-              Escolha uma nota de 1 a 5 estrelas para contribuir com a média do filme.
+              Escolha uma nota de 1 a 5 estrelas para contribuir com a media do filme.
             </p>
             <div className="mt-4 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
               <StarRating
@@ -121,15 +134,11 @@ export function Details() {
                 type="button"
                 disabled={submitting}
               >
-                {submitting ? "Enviando..." : "Enviar avaliação"}
+                {submitting ? "Enviando..." : "Enviar avaliacao"}
               </button>
             </div>
-            {submitError && (
-              <p className="mt-2 text-sm text-red-400">{submitError}</p>
-            )}
-            {submitSuccess && (
-              <p className="mt-2 text-sm text-emerald-400">{submitSuccess}</p>
-            )}
+            {submitError && <p className="mt-2 text-sm text-red-400">{submitError}</p>}
+            {submitSuccess && <p className="mt-2 text-sm text-emerald-400">{submitSuccess}</p>}
           </div>
         </>
       )}

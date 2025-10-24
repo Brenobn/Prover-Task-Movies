@@ -7,6 +7,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom"
 import { App } from "./App"
 import { CreateMovie } from "./pages/CreateMovie"
 import { Details } from "./pages/Details"
+import { EditMovie } from "./pages/EditMovie"
 import { Perfil } from "./pages/Perfil"
 import { UserProvider } from "./contexts/UserContext"
 import { Home } from "./pages/Home"
@@ -33,6 +34,10 @@ const router = createBrowserRouter([
       {
         path: "/detalhes/:movieId",
         element: <Details />,
+      },
+      {
+        path: "/editarfilme/:movieId",
+        element: <EditMovie />,
       },
       {
         path: "/criarfilme",

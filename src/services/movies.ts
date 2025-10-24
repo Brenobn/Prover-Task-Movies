@@ -4,159 +4,200 @@ export type Movie = {
   description: string
   rating: number // 0..5
   tags: string[]
+  year?: number
 }
 
-const mockMovies: Movie[] = [
+export type MovieInput = {
+  title: string
+  description: string
+  tags: string[]
+  year?: number
+  rating?: number
+}
+
+const STORAGE_KEY = "prover-movies:movies"
+
+const seedMovies: Movie[] = [
   {
     id: "1",
     title: "Interestelar",
     description:
-      "Interestelar acompanha Cooper, um ex-piloto da NASA que vive em um futuro onde a Terra está morrendo por causa da escassez de recursos e mudanças climáticas severas. Recrutado para uma missão secreta, ele se junta a uma equipe de cientistas que viaja por um buraco de minhoca em busca de um novo planeta habitável. Enquanto enfrenta os perigos do espaço e da passagem do tempo, Cooper precisa lidar com a dor de deixar sua família para trás e a esperança de garantir um futuro para a humanidade.",
-    rating: 3.8,
-    tags: ["Ficção Científica", "Drama"],
+      "Ex-piloto da NASA lidera uma missao atraves de um buraco de minhoca em busca de um novo lar para a humanidade.",
+    rating: 4.5,
+    tags: ["Ficcao Cientifica", "Drama"],
+    year: 2014,
   },
   {
     id: "2",
     title: "A Origem",
     description:
-      "Um ladrão invade sonhos para roubar segredos e precisa plantar uma ideia em uma mente.",
+      "Um ladrao invade sonhos para roubar segredos corporativos e precisa plantar uma ideia na mente de um herdeiro.",
     rating: 4,
-    tags: ["Ação", "Sci-Fi"],
+    tags: ["Acao", "Sci-Fi"],
+    year: 2010,
   },
   {
     id: "3",
     title: "O Cavaleiro das Trevas",
     description:
-      "Batman enfrenta o Coringa enquanto luta para proteger Gotham do caos.",
+      "Batman enfrenta o Coringa enquanto luta para proteger Gotham do caos que o vilao deseja instaurar.",
     rating: 5,
-    tags: ["Ação", "Crime"],
+    tags: ["Acao", "Crime"],
+    year: 2008,
   },
-  {
-    id: "4",
-    title: "Forrest Gump",
-    description:
-      "Um homem simples com um coração puro vive eventos marcantes da história americana.",
-    rating: 5,
-    tags: ["Drama", "Romance"],
-  },
-  {
-    id: "5",
-    title: "Vingadores: Ultimato",
-    description:
-      "Os heróis restantes se unem para reverter o estalo de Thanos e salvar o universo.",
-    rating: 5,
-    tags: ["Ação", "Super-Heróis"],
-  },
-  {
-    id: "6",
-    title: "Gladiador",
-    description:
-      "Um general romano busca vingança contra o imperador corrupto que destruiu sua família.",
-    rating: 5,
-    tags: ["Ação", "Histórico"],
-  },
-  {
-    id: "7",
-    title: "Clube da Luta",
-    description:
-      "Um homem entediado com a vida corporativa encontra uma forma extrema de se sentir vivo.",
-    rating: 4,
-    tags: ["Drama", "Psicológico"],
-  },
-  {
-    id: "8",
-    title: "Matrix",
-    description:
-      "Um hacker descobre que o mundo que conhece é uma simulação criada por máquinas.",
-    rating: 5,
-    tags: ["Ficção Científica", "Ação"],
-  },
-  {
-    id: "9",
-    title: "O Senhor dos Anéis: A Sociedade do Anel",
-    description:
-      "Um grupo improvável parte em uma jornada para destruir um anel que ameaça o mundo.",
-    rating: 5,
-    tags: ["Fantasia", "Aventura"],
-  },
-  {
-    id: "10",
-    title: "Parasita",
-    description:
-      "Uma família pobre se infiltra na vida de uma família rica em busca de oportunidades.",
-    rating: 5,
-    tags: ["Drama", "Suspense"],
-  },
-  {
-    id: "11",
-    title: "Coringa",
-    description:
-      "A origem sombria de Arthur Fleck, um comediante fracassado que se transforma em um símbolo do caos.",
-    rating: 5,
-    tags: ["Drama", "Psicológico"],
-  },
-  {
-    id: "12",
-    title: "O Poderoso Chefão",
-    description:
-      "A saga da família Corleone e sua luta pelo poder e pela sobrevivência no mundo do crime.",
-    rating: 5,
-    tags: ["Crime", "Drama"],
-  },
-  {
-    id: "13",
-    title: "Duna",
-    description:
-      "Um jovem herdeiro embarca em uma jornada para proteger o planeta mais valioso do universo.",
-    rating: 4,
-    tags: ["Ficção Científica", "Aventura"],
-  },
-  {
-    id: "14",
-    title: "Homem-Aranha: Sem Volta Para Casa",
-    description:
-      "Peter Parker enfrenta vilões de universos diferentes após um feitiço dar errado.",
-    rating: 4,
-    tags: ["Ação", "Super-Heróis"],
-  },
-  {
-    id: "15",
-    title: "O Grande Gatsby",
-    description:
-      "Um misterioso milionário organiza festas extravagantes em busca de um amor perdido.",
-    rating: 3,
-    tags: ["Drama", "Romance"],
-  },
-];
+]
 
+function cloneMovies(source: Movie[]): Movie[] {
+  return source.map((movie) => ({ ...movie, tags: [...movie.tags] }))
+}
+
+function loadMockMovies(): Movie[] {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY)
+    if (raw) {
+      return cloneMovies(JSON.parse(raw) as Movie[])
+    }
+  } catch {}
+  const seeded = cloneMovies(seedMovies)
+  saveMockMovies(seeded)
+  return seeded
+}
+
+function saveMockMovies(movies: Movie[]) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(movies))
+  } catch {}
+}
+
+function generateId() {
+  if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
+    return crypto.randomUUID()
+  }
+  return `${Date.now()}-${Math.random().toString(16).slice(2)}`
+}
 
 export async function listMovies(signal?: AbortSignal): Promise<Movie[]> {
   const baseURL = import.meta.env.VITE_API_BASE_URL as string | undefined
   if (baseURL) {
+    // TODO (.NET Movies): substituir por chamada GET /movies
     const res = await fetch(`${baseURL}/movies`, { signal })
-    if (!res.ok) { throw new Error(`HTTP ${res.status}`) }
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status}`)
+    }
     return (await res.json()) as Movie[]
   }
 
-  return Promise.resolve(mockMovies)
+  return loadMockMovies()
 }
 
 export async function getMovieById(id: string, signal?: AbortSignal): Promise<Movie> {
   const baseURL = import.meta.env.VITE_API_BASE_URL as string | undefined
   if (baseURL) {
+    // TODO (.NET Movies): substituir por chamada GET /movies/{id}
     const res = await fetch(`${baseURL}/movies/${id}`, { signal })
     if (!res.ok) {
-      // biome-ignore lint/style/noMagicNumbers: ok
-      throw new Error(res.status === 404 ? "Filme não encontrado" : `HTTP ${res.status}`)
+      throw new Error(res.status === 404 ? "Filme nao encontrado" : `HTTP ${res.status}`)
     }
     return (await res.json()) as Movie
   }
 
-  const movie = mockMovies.find((m) => m.id === id)
+  const movies = loadMockMovies()
+  const movie = movies.find((m) => m.id === id)
   if (!movie) {
-    throw new Error("Filme não encontrado")
+    throw new Error("Filme nao encontrado")
   }
-  return Promise.resolve(movie)
+  return movie
+}
+
+export async function createMovie(payload: MovieInput, signal?: AbortSignal): Promise<Movie> {
+  const baseURL = import.meta.env.VITE_API_BASE_URL as string | undefined
+  if (baseURL) {
+    // TODO (.NET Movies): substituir por chamada POST /movies
+    const res = await fetch(`${baseURL}/movies`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+      signal,
+    })
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status}`)
+    }
+    return (await res.json()) as Movie
+  }
+
+  const movies = loadMockMovies()
+  const movie: Movie = {
+    id: generateId(),
+    title: payload.title,
+    description: payload.description,
+    tags: [...payload.tags],
+    year: payload.year,
+    rating: payload.rating ?? 0,
+  }
+  movies.push(movie)
+  saveMockMovies(movies)
+  return movie
+}
+
+export async function updateMovie(
+  movieId: string,
+  payload: MovieInput,
+  signal?: AbortSignal,
+): Promise<Movie> {
+  const baseURL = import.meta.env.VITE_API_BASE_URL as string | undefined
+  if (baseURL) {
+    // TODO (.NET Movies): substituir por chamada PUT/PATCH /movies/{id}
+    const res = await fetch(`${baseURL}/movies/${movieId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+      signal,
+    })
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status}`)
+    }
+    return (await res.json()) as Movie
+  }
+
+  const movies = loadMockMovies()
+  const index = movies.findIndex((movie) => movie.id === movieId)
+  if (index === -1) {
+    throw new Error("Filme nao encontrado")
+  }
+  const current = movies[index]
+  const updated: Movie = {
+    ...current,
+    title: payload.title,
+    description: payload.description,
+    tags: [...payload.tags],
+    year: payload.year,
+    rating: payload.rating ?? current.rating,
+  }
+  movies[index] = updated
+  saveMockMovies(movies)
+  return updated
+}
+
+export async function deleteMovie(movieId: string, signal?: AbortSignal): Promise<void> {
+  const baseURL = import.meta.env.VITE_API_BASE_URL as string | undefined
+  if (baseURL) {
+    // TODO (.NET Movies): substituir por chamada DELETE /movies/{id}
+    const res = await fetch(`${baseURL}/movies/${movieId}`, {
+      method: "DELETE",
+      signal,
+    })
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status}`)
+    }
+    return
+  }
+
+  const movies = loadMockMovies().filter((movie) => movie.id !== movieId)
+  saveMockMovies(movies)
 }
 
 export async function submitMovieRating(
@@ -166,6 +207,7 @@ export async function submitMovieRating(
 ): Promise<void> {
   const baseURL = import.meta.env.VITE_API_BASE_URL as string | undefined
   if (baseURL) {
+    // TODO (.NET Movies): substituir por chamada POST /movies/{id}/ratings
     const res = await fetch(`${baseURL}/movies/${movieId}/ratings`, {
       method: "POST",
       headers: {
@@ -180,5 +222,16 @@ export async function submitMovieRating(
     return
   }
 
-  return Promise.resolve()
+  const movies = loadMockMovies()
+  const index = movies.findIndex((movie) => movie.id === movieId)
+  if (index === -1) {
+    throw new Error("Filme nao encontrado")
+  }
+
+  movies[index] = {
+    ...movies[index],
+    rating,
+  }
+  saveMockMovies(movies)
 }
+

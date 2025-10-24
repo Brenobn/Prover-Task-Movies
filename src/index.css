@@ -19,7 +19,7 @@ input[type="number"] {
   appearance: textfield;
 }
 
-/* Custom scrollbar — pink thumb, dark track */
+/* Custom scrollbar - pink thumb, dark track */
 /* Firefox */
 * {
   scrollbar-width: thin;

@@ -15,10 +15,9 @@ export function Input({ icon: Icon, placeholder, ...rest }: InputProps) {
       ) : null}
       <input
         className="h-14 w-full border-0 bg-transparent px-6 py-5 text-white placeholder:text-[#948F99] focus:outline-none"
-        placeholder={placeholder ?? "Pesquisar pelo título"}
+        placeholder={placeholder ?? "Pesquisar pelo titulo"}
         {...rest}
       />
     </div>
   )
 }
-

@@ -1,10 +1,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react"
+import type { AuthUser } from "../services/auth"
 
-export type User = {
-  name: string
-  email: string
-  avatar: string
-}
+export type User = AuthUser
 
 type UserContextValue = {
   user: User | null
