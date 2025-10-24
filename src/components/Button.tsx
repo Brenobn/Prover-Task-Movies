@@ -1,17 +1,19 @@
-import type { IconType } from "react-icons";
+import type { ButtonHTMLAttributes } from "react"
+import type { IconType } from "react-icons"
 
-type ButtonProps = {
-  icon?: IconType;
-  title: string;
-};
+type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
+  icon?: IconType
+  title: string
+}
 
-export function Button({ icon: Icon, title, ...rest }: ButtonProps) {
+export function Button({ icon: Icon, title, type = "button", ...rest }: ButtonProps) {
   return (
-    <button className="w-full bg-[#FF859B] text-[#3E3B47] h-14 border-0 py-0 px-4 rounded-[10px] font-medium"
-      type="button"
+    <button
+      className="inline-flex h-14 w-full items-center justify-center gap-2 rounded-[10px] border-0 bg-[#FF859B] px-4 py-0 font-medium text-[#3E3B47]"
+      type={type}
       {...rest}
     >
-      {Icon && <Icon size={16} />} 
+      {Icon ? <Icon size={16} /> : null}
       {title}
     </button>
   )

@@ -7,8 +7,9 @@ export type User = {
 }
 
 type UserContextValue = {
-  user: User
+  user: User | null
   setUser: (next: User) => void
+  logout: () => void
 }
 
 const UserContext = createContext<UserContextValue | undefined>(undefined)
@@ -16,26 +17,34 @@ const UserContext = createContext<UserContextValue | undefined>(undefined)
 const STORAGE_KEY = "prover-movies:user"
 
 export function UserProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User>(() => {
+  const [userState, setUserState] = useState<User | null>(() => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY)
       if (raw) return JSON.parse(raw) as User
     } catch {}
-    return {
-      name: "Breno",
-      email: "breno@email.com",
-      avatar: "https://github.com/Brenobn.png",
-    }
+    return null
   })
 
   useEffect(() => {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(user))
+      if (userState) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(userState))
+      } else {
+        localStorage.removeItem(STORAGE_KEY)
+      }
     } catch {}
-  }, [user])
+  }, [userState])
+
+  const setUser = (next: User) => {
+    setUserState(next)
+  }
+
+  const logout = () => {
+    setUserState(null)
+  }
 
   return (
-    <UserContext.Provider value={{ user, setUser }}>
+    <UserContext.Provider value={{ user: userState, setUser, logout }}>
       {children}
     </UserContext.Provider>
   )

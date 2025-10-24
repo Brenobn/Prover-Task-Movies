@@ -1,9 +1,15 @@
-import { Outlet, useLocation } from "react-router-dom";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { Header } from "./components/Header";
+import { useUser } from "./contexts/UserContext";
 
 export function App() {
 	const location = useLocation();
+	const { user } = useUser();
 	const hideHeader = location.pathname === "/perfil";
+
+	if (!user) {
+		return <Navigate to="/siginin" replace state={{ from: location }} />;
+	}
 
 	return (
 		<div

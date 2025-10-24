@@ -10,7 +10,7 @@ import { Details } from "./pages/Details"
 import { Perfil } from "./pages/Perfil"
 import { UserProvider } from "./contexts/UserContext"
 import { Home } from "./pages/Home"
-import { SiginIn } from "./pages/SiginIn"
+import { SiginIn } from "./pages/SignIn"
 import { SiginUp } from "./pages/SinginUp"
 
 const router = createBrowserRouter([

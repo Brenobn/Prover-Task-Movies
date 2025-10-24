@@ -11,7 +11,7 @@ const mockMovies: Movie[] = [
     id: "1",
     title: "Interestelar",
     description:
-      "Uma equipe viaja através de um buraco de minhoca em busca de um novo lar para a humanidade.",
+      "Interestelar acompanha Cooper, um ex-piloto da NASA que vive em um futuro onde a Terra está morrendo por causa da escassez de recursos e mudanças climáticas severas. Recrutado para uma missão secreta, ele se junta a uma equipe de cientistas que viaja por um buraco de minhoca em busca de um novo planeta habitável. Enquanto enfrenta os perigos do espaço e da passagem do tempo, Cooper precisa lidar com a dor de deixar sua família para trás e a esperança de garantir um futuro para a humanidade.",
     rating: 3.8,
     tags: ["Ficção Científica", "Drama"],
   },
@@ -159,3 +159,26 @@ export async function getMovieById(id: string, signal?: AbortSignal): Promise<Mo
   return Promise.resolve(movie)
 }
 
+export async function submitMovieRating(
+  movieId: string,
+  rating: number,
+  signal?: AbortSignal,
+): Promise<void> {
+  const baseURL = import.meta.env.VITE_API_BASE_URL as string | undefined
+  if (baseURL) {
+    const res = await fetch(`${baseURL}/movies/${movieId}/ratings`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ rating }),
+      signal,
+    })
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status}`)
+    }
+    return
+  }
+
+  return Promise.resolve()
+}

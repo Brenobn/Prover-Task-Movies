@@ -1,14 +1,26 @@
-import { useRef, useState } from "react"
+﻿import { useEffect, useRef, useState } from "react"
 import { FiArrowLeft, FiCamera, FiLock, FiMail, FiUser } from "react-icons/fi"
-import { Link } from "react-router-dom"
+import { Link, Navigate } from "react-router-dom"
 import { useUser } from "../contexts/UserContext"
 
 export function Perfil() {
   const { user, setUser } = useUser()
-  const [name, setName] = useState(user.name)
-  const [email, setEmail] = useState(user.email)
+  const [name, setName] = useState("")
+  const [email, setEmail] = useState("")
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null)
   const fileRef = useRef<HTMLInputElement | null>(null)
+
+  useEffect(() => {
+    if (user) {
+      setName(user.name)
+      setEmail(user.email)
+      setAvatarPreview(null)
+    }
+  }, [user])
+
+  if (!user) {
+    return <Navigate to="/siginin" replace />
+  }
 
   function handlePickAvatar() {
     fileRef.current?.click()
@@ -16,26 +28,33 @@ export function Perfil() {
 
   function handleAvatarChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
-    if (!file) { return }
+    if (!file) {
+      return
+    }
     const url = URL.createObjectURL(file)
     setAvatarPreview(url)
   }
 
+  const currentUser = user
+
   function handleSave() {
+    if (!currentUser) {
+      return
+    }
     setUser({
       name,
       email,
-      avatar: avatarPreview ?? user.avatar,
+      avatar: avatarPreview ?? currentUser.avatar,
     })
   }
 
-  const avatarUrl = avatarPreview ?? user.avatar
+  const avatarUrl = avatarPreview ?? currentUser.avatar
 
   return (
     <div className="px-32 py-10">
       <Link
         className="inline-flex items-center gap-2 text-[#FF859B] no-underline"
-        to={"/"}
+        to="/"
       >
         <FiArrowLeft />
         Voltar
