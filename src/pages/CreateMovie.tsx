@@ -25,7 +25,9 @@ export function CreateMovie() {
 
   function addTag() {
     const v = newTag.trim()
-    if (!v) { return }
+    if (!v) {
+      return
+    }
     if (tags.includes(v)) {
       setNewTag("")
       return
@@ -65,7 +67,9 @@ export function CreateMovie() {
         setTitle(d.title ?? "")
         setYear(d.year ? String(d.year) : "")
         setDescription(d.description ?? "")
-        if (Array.isArray(d.tags)) { setTags(d.tags) }
+        if (Array.isArray(d.tags)) {
+          setTags(d.tags)
+        }
       }
     } catch {}
   }, [])
@@ -100,10 +104,7 @@ export function CreateMovie() {
             onChange={(e) => setYear(e.target.value)}
             onInput={(e) => {
               const el = e.currentTarget
-<<<<<<< HEAD
-=======
               // biome-ignore lint/style/noMagicNumbers: ok
->>>>>>> 8e6293a4fd0554b874916fa49a17a76c732b8ef3
               el.value = el.value.replace(/\D/g, "").slice(0, 4)
             }}
             placeholder="Ano de lançamento"
@@ -204,3 +205,4 @@ export function CreateMovie() {
     </div>
   )
 }
+

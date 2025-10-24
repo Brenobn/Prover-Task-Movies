@@ -1,3 +1,4 @@
+// biome-ignore assist/source/organizeImports: ok
 import { StrictMode } from "react"
 import { createRoot } from "react-dom/client"
 import "./index.css"
@@ -14,7 +15,7 @@ import { SiginIn } from "./pages/SiginIn"
 const router = createBrowserRouter([
   {
     path: "/siginin",
-    element: <SiginIn />
+    element: <SiginIn />,
   },
   {
     path: "/",
