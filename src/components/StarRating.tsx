@@ -1,21 +1,22 @@
-import { AiFillStar, AiOutlineStar } from "react-icons/ai"
+import ReactStars from "react-rating-stars-component"
 
 type StarRatingProps = {
-  value?: number // 0..5
+  value?: number // 0..5, aceita decimais
+  size?: number
 }
 
-export function StarRating({ value = 5 }: StarRatingProps) {
-  // biome-ignore lint/style/noMagicNumbers: ok
-  const v = Math.max(0, Math.min(5, Math.round(value)))
-  const stars = Array.from({ length: 5 }, (_, i) => i < v)
+export function StarRating({ value = 0, size = 20 }: StarRatingProps) {
   return (
-    <div className="flex gap-1.5">
-      <span className="inline-flex text-[#FF859B]">
-        {stars.map((filled, idx) => (
-          // biome-ignore lint/suspicious/noArrayIndexKey: ok
-<span key={idx}>{filled ? <AiFillStar /> : <AiOutlineStar />}</span>
-        ))}
-      </span>
-    </div>
+    <ReactStars
+      count={5}
+      value={value}
+      size={size}
+      isHalf
+      edit={false}
+      activeColor="#FF859B"
+      color="#3E3B47"
+      char="★"
+      classNames="flex items-center gap-1 font-sans"
+    />
   )
 }

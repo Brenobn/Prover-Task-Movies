@@ -17,7 +17,7 @@ export function CreateMovie() {
   const [title, setTitle] = useState("")
   const [year, setYear] = useState("")
   const [description, setDescription] = useState("")
-  const [tags, setTags] = useState<string[]>(["React"])
+  const [tags, setTags] = useState<string[]>(["Terror"])
   const [newTag, setNewTag] = useState("")
   const [showConfirm, setShowConfirm] = useState(false)
 

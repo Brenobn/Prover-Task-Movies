@@ -6,6 +6,7 @@ import { StarRating } from "../components/StarRating"
 import { Tag } from "../components/Tag"
 import { listMovies, type Movie } from "../services/movies"
 
+
 export function Home() {
   const [movies, setMovies] = useState<Movie[]>([])
   const [loading, setLoading] = useState(true)
@@ -25,20 +26,19 @@ export function Home() {
   }, [])
 
   return (
-    <div className="p-8">
-      <div className="flex items-center justify-around gap-[460px]">
+    <div className="px-20 py-12">
+      <div className="mx-auto flex w-full max-w-7xl items-center justify-between">
         <h1 className="font-normal font-secondary text-3xl text-white">Meus Filmes</h1>
 
         <Link
-          className="mt-4 inline-flex h-12 w-52 shrink-0 items-center gap-2 rounded-lg border-0 bg-[#FF859B] p-7 font-medium text-[#3E3B47] disabled:opacity-50"
+          className="inline-flex h-12 w-52 shrink-0 items-center gap-2 rounded-lg border-0 bg-[#FF859B] p-7 font-medium text-[#3E3B47] disabled:opacity-50"
           to="/criarfilme"
         >
           <FiPlus />
           Adicionar filme
         </Link>
       </div>
-
-      <div className="mt-10 flex w-full flex-col gap-6">
+      <div className="mx-auto mt-10 flex w-full flex-col gap-6">
         {loading && (
           <p className="font-primary text-[#999591] text-base">Carregando filmes...</p>
         )}
@@ -49,7 +49,14 @@ export function Home() {
         {!(loading || error ) &&
           movies.map((m) => (
             <Section key={m.id} title={m.title} to={`/detalhes/${m.id}`}>
-              <StarRating value={m.rating} />
+
+              <div className="flex items-center gap-2">
+              <StarRating value={m.rating} size={24} />
+              <span className="text-[#FF859B] text-sm font-medium">
+                {m.rating.toFixed(1)}
+              </span>
+              </div>
+
               <p className="font-normal font-primary text-[#999591] text-base">
                 {m.description}
               </p>

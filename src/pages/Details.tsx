@@ -50,7 +50,12 @@ export function Details() {
             <h1 className="mr-5 font-medium font-secondary text-4xl text-white">
               {movie.title}
             </h1>
-            <StarRating value={movie.rating} />
+            <div className="flex items-center gap-2">
+              <StarRating value={movie.rating} size={24} />
+              <span className="font-medium text-[#FF859B] text-sm">
+                {movie.rating.toFixed(1)}
+              </span>
+              </div>
           </div>
 
           {movie.tags.length > 0 && (

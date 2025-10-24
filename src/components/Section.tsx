@@ -14,7 +14,7 @@ export function Section({ title, to, children }: SectionProps) {
       to={to}
       className="flex w-full flex-col items-start gap-4 rounded-2xl bg-[#FF859B10] p-8 no-underline"
     >
-      <h2 className="font-bold font-secondary text-2xl text-white">{title}</h2>
+      <h2 className="font-secondary text-2xl font-bold text-white">{title}</h2>
 
       {children}
     </Link>
