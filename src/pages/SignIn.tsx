@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { FiLock, FiMail } from "react-icons/fi"
+import { FiLock, FiUser } from "react-icons/fi"
 import { Navigate, useNavigate } from "react-router-dom"
 import Background from "../assets/Background.png"
 import { Button } from "../components/Button"
@@ -9,9 +9,9 @@ import { useUser } from "../contexts/UserContext"
 import { loginUser } from "../services/auth"
 
 export function SignIn() {
-  const { user, setUser } = useUser()
+  const { user, refreshUser } = useUser()
   const navigate = useNavigate()
-  const [email, setEmail] = useState("")
+  const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
@@ -24,15 +24,18 @@ export function SignIn() {
     e.preventDefault()
     setError(null)
 
-    if (!email || !password) {
-      setError("Informe email e senha")
+    if (!username || !password) {
+      setError("Informe usuario e senha")
       return
     }
 
     setLoading(true)
     try {
-      const authenticated = await loginUser({ email, password })
-      setUser(authenticated)
+      await loginUser({ username, password })
+      const authenticated = await refreshUser()
+      if (!authenticated) {
+        throw new Error("Nao foi possivel confirmar a sessao")
+      }
       navigate("/", { replace: true })
     } catch (err) {
       setError(err instanceof Error ? err.message : "Nao foi possivel entrar")
@@ -58,11 +61,11 @@ export function SignIn() {
 
         <div className="flex w-full flex-col gap-2">
           <Input
-            icon={FiMail}
-            placeholder="Email"
-            type="email"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
+            icon={FiUser}
+            placeholder="Nome de usuario"
+            type="text"
+            value={username}
+            onChange={(event) => setUsername(event.target.value)}
           />
           <Input
             icon={FiLock}

@@ -7,7 +7,8 @@ import { useUser } from "../contexts/UserContext"
 import { createMovie } from "../services/movies"
 
 export function CreateMovie() {
-  const { user } = useUser()
+  const { user, hasRole } = useUser()
+  const isAdmin = hasRole("Admin")
   const navigate = useNavigate()
 
   const [title, setTitle] = useState("")
@@ -20,6 +21,10 @@ export function CreateMovie() {
 
   if (!user) {
     return <Navigate to="/signin" replace />
+  }
+
+  if (!isAdmin) {
+    return <Navigate to="/" replace />
   }
 
   function addTag() {

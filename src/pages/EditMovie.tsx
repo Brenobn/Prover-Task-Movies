@@ -8,7 +8,8 @@ import { getMovieById, updateMovie } from "../services/movies"
 export function EditMovie() {
   const { movieId } = useParams<{ movieId: string }>()
   const navigate = useNavigate()
-  const { user } = useUser()
+  const { user, hasRole } = useUser()
+  const isAdmin = hasRole("Admin")
 
   const [title, setTitle] = useState("")
   const [year, setYear] = useState("")
@@ -37,6 +38,9 @@ export function EditMovie() {
         setTags(movie.tags)
       })
       .catch((err) => {
+        if (err instanceof DOMException && err.name === "AbortError") {
+          return
+        }
         setError(err instanceof Error ? err.message : "Nao foi possivel carregar o filme")
       })
       .finally(() => setLoading(false))
@@ -82,6 +86,10 @@ export function EditMovie() {
 
   if (!user) {
     return <Navigate to="/signin" replace />
+  }
+
+  if (!isAdmin) {
+    return <Navigate to="/" replace />
   }
 
   if (loading) {

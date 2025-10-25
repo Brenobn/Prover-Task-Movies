@@ -1,47 +1,81 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react"
-import type { AuthUser } from "../services/auth"
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+  type ReactNode,
+} from "react"
+import { fetchCurrentUser, logoutUser, type AuthUser } from "../services/auth"
 
 export type User = AuthUser
 
 type UserContextValue = {
   user: User | null
-  setUser: (next: User) => void
-  logout: () => void
+  setUser: (next: User | null) => void
+  logout: () => Promise<void>
+  refreshUser: () => Promise<User | null>
+  initializing: boolean
+  hasRole: (role: string) => boolean
 }
 
 const UserContext = createContext<UserContextValue | undefined>(undefined)
 
-const STORAGE_KEY = "prover-movies:user"
-
 export function UserProvider({ children }: { children: ReactNode }) {
-  const [userState, setUserState] = useState<User | null>(() => {
+  const [userState, setUserState] = useState<User | null>(null)
+  const [initializing, setInitializing] = useState(true)
+
+  const setUser = useCallback((next: User | null) => {
+    setUserState(next)
+  }, [])
+
+  const refreshUser = useCallback(async () => {
     try {
-      const raw = localStorage.getItem(STORAGE_KEY)
-      if (raw) return JSON.parse(raw) as User
-    } catch {}
-    return null
-  })
+      const current = await fetchCurrentUser()
+      setUserState(current)
+      return current
+    } catch (error) {
+      console.error("Nao foi possivel atualizar o usuario autenticado:", error)
+      setUserState(null)
+      return null
+    }
+  }, [])
+
+  const logout = useCallback(async () => {
+    try {
+      await logoutUser()
+    } catch (error) {
+      console.error("Falha ao encerrar sessao:", error)
+    } finally {
+      setUserState(null)
+    }
+  }, [])
 
   useEffect(() => {
-    try {
-      if (userState) {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(userState))
-      } else {
-        localStorage.removeItem(STORAGE_KEY)
-      }
-    } catch {}
-  }, [userState])
+    refreshUser().finally(() => setInitializing(false))
+  }, [refreshUser])
 
-  const setUser = (next: User) => {
-    setUserState(next)
-  }
-
-  const logout = () => {
-    setUserState(null)
-  }
+  const hasRole = useCallback(
+    (role: string) => {
+      if (!role) return false
+      return (userState?.roles ?? []).some(
+        (current) => current.toLowerCase() === role.toLowerCase(),
+      )
+    },
+    [userState],
+  )
 
   return (
-    <UserContext.Provider value={{ user: userState, setUser, logout }}>
+    <UserContext.Provider
+      value={{
+        user: userState,
+        setUser,
+        logout,
+        refreshUser,
+        initializing,
+        hasRole,
+      }}
+    >
       {children}
     </UserContext.Provider>
   )

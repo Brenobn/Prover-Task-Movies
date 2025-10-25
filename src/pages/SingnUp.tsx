@@ -11,9 +11,10 @@ import { registerUser } from "../services/auth"
 export function SignUp() {
   const { user } = useUser()
   const navigate = useNavigate()
-  const [name, setName] = useState("")
+  const [username, setUsername] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
@@ -25,15 +26,19 @@ export function SignUp() {
     e.preventDefault()
     setError(null)
 
-    if (!name || !email || !password) {
-      setError("Preencha nome, email e senha")
+    if (!username || !email || !password || !confirmPassword) {
+      setError("Preencha todos os campos")
+      return
+    }
+
+    if (password !== confirmPassword) {
+      setError("As senhas nao conferem")
       return
     }
 
     setLoading(true)
     try {
-      await registerUser({ name, email, password })
-
+      await registerUser({ username, email, password, confirmPassword })
       navigate("/signin", { replace: true })
     } catch (err) {
       setError(err instanceof Error ? err.message : "Nao foi possivel cadastrar")
@@ -60,10 +65,10 @@ export function SignUp() {
         <div className="flex w-full flex-col gap-2">
           <Input
             icon={FiUser}
-            placeholder="Nome"
+            placeholder="Nome de usuario"
             type="text"
-            value={name}
-            onChange={(event) => setName(event.target.value)}
+            value={username}
+            onChange={(event) => setUsername(event.target.value)}
           />
           <Input
             icon={FiMail}
@@ -78,6 +83,13 @@ export function SignUp() {
             type="password"
             value={password}
             onChange={(event) => setPassword(event.target.value)}
+          />
+          <Input
+            icon={FiLock}
+            placeholder="Confirmar senha"
+            type="password"
+            value={confirmPassword}
+            onChange={(event) => setConfirmPassword(event.target.value)}
           />
         </div>
 

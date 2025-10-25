@@ -18,8 +18,8 @@ export function Perfil() {
 
   useEffect(() => {
     if (user) {
-      setName(user.name)
-      setEmail(user.email)
+      setName(user.username)
+      setEmail(user.email ?? "")
       setAvatarPreview(null)
       setCurrentPassword("")
       setNewPassword("")
@@ -54,10 +54,9 @@ export function Perfil() {
     setError(null)
     try {
       const updated = await updateUserProfile({
-        userId: currentUser.id,
-        name,
+        displayName: name,
         email,
-        avatar: avatarPreview ?? currentUser.avatar,
+        avatarUrl: avatarPreview ?? currentUser.avatarUrl,
         currentPassword: currentPassword || undefined,
         newPassword: newPassword || undefined,
       })
@@ -72,7 +71,7 @@ export function Perfil() {
     }
   }
 
-  const avatarUrl = avatarPreview ?? currentUser.avatar
+  const avatarUrl = avatarPreview ?? currentUser.avatarUrl
 
   return (
     <div className="px-32 py-10">
@@ -113,7 +112,7 @@ export function Perfil() {
             <input
               className="w-full bg-transparent text-white placeholder:text-[#948F99] focus:outline-none"
               onChange={(e) => setName(e.target.value)}
-              placeholder="Seu nome"
+              placeholder="Seu nome de usuario"
               value={name}
             />
           </div>
