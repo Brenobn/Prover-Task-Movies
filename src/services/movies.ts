@@ -21,7 +21,7 @@ export type MovieInput = {
 type ApiMovie = {
   id: string
   titulo: string
-  nota: number
+  nota: number | null
   observacao: string
   dtAnoLancamento: string
   marcadores: string[]
@@ -34,6 +34,14 @@ type ApiMoviePayload = {
   observacao: string
   dtAnoLancamento: string
   marcadores: string[]
+}
+
+function isApiMovie(value: unknown): value is ApiMovie {
+  if (!value || typeof value !== "object") {
+    return false
+  }
+  const movie = value as Partial<ApiMovie>
+  return typeof movie.id === "string" && typeof movie.titulo === "string"
 }
 
 function parseYear(dateValue?: string | null) {
@@ -57,7 +65,8 @@ function mapApiMovie(movie: ApiMovie): Movie {
     id: movie.id,
     title: movie.titulo,
     description: movie.observacao,
-    rating: movie.nota,
+    // Safeguard against backend sending null/undefined rating
+    rating: typeof movie.nota === "number" ? movie.nota : 0,
     tags: movie.marcadores ?? [],
     year: parseYear(movie.dtAnoLancamento),
     releaseDate: movie.dtAnoLancamento,
@@ -105,12 +114,16 @@ export async function updateMovie(
   payload: MovieInput,
   signal?: AbortSignal,
 ): Promise<Movie> {
-  const response = await apiRequest<ApiMovie>(`/Filme/editar-filme/${movieId}`, {
+  const response = await apiRequest<ApiMovie | undefined>(`/Filme/editar-filme/${movieId}`, {
     method: "PUT",
     json: toApiPayload(payload, movieId),
     signal,
   })
-  return mapApiMovie(response)
+  if (isApiMovie(response)) {
+    return mapApiMovie(response)
+  }
+  // Some backends return 204/no body for PUT. Re-fetch to keep UI consistent.
+  return getMovieById(movieId, signal)
 }
 
 export async function deleteMovie(movieId: string, signal?: AbortSignal): Promise<void> {
@@ -119,4 +132,3 @@ export async function deleteMovie(movieId: string, signal?: AbortSignal): Promis
     signal,
   })
 }
-
