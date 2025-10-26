@@ -49,15 +49,20 @@ export function Perfil() {
   }
 
   async function handleSave() {
-    setSaving(true)
     setFeedback(null)
     setError(null)
+
+    if (!currentPassword.trim()) {
+      setError("Informe sua senha atual para atualizar o perfil.")
+      return
+    }
+
+    setSaving(true)
     try {
       const updated = await updateUserProfile({
-        displayName: name,
+        username: name,
         email,
-        avatarUrl: avatarPreview ?? currentUser.avatarUrl,
-        currentPassword: currentPassword || undefined,
+        currentPassword,
         newPassword: newPassword || undefined,
       })
       setUser(updated)

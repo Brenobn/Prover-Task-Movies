@@ -22,6 +22,63 @@ function isJsonLike(headers: Headers) {
   return contentType?.includes("application/json")
 }
 
+function pickProblemDetail(payload: Record<string, unknown>, key: string) {
+  const value = payload[key]
+  return typeof value === "string" && value.trim() ? value : null
+}
+
+function extractModelErrors(payload: Record<string, unknown>) {
+  const errors =
+    (typeof payload.errors === "object" && payload.errors) ||
+    (typeof payload.Errors === "object" && payload.Errors)
+  if (!errors) return null
+
+  for (const value of Object.values(errors as Record<string, unknown>)) {
+    if (typeof value === "string" && value.trim()) {
+      return value
+    }
+    if (Array.isArray(value)) {
+      const first = value.find(
+        (item): item is string => typeof item === "string" && item.trim().length > 0,
+      )
+      if (first) {
+        return first
+      }
+    }
+  }
+
+  return null
+}
+
+function buildErrorMessage(payload: unknown, status: number) {
+  if (!payload || typeof payload !== "object") {
+    if (typeof payload === "string" && payload.trim()) {
+      return payload
+    }
+    return `Falha na requisicao (HTTP ${status})`
+  }
+
+  const record = payload as Record<string, unknown>
+
+  const directMessage =
+    pickProblemDetail(record, "message") ??
+    pickProblemDetail(record, "Message") ??
+    pickProblemDetail(record, "detail") ??
+    pickProblemDetail(record, "Detail") ??
+    pickProblemDetail(record, "title") ??
+    pickProblemDetail(record, "Title")
+  if (directMessage) {
+    return directMessage
+  }
+
+  const modelError = extractModelErrors(record)
+  if (modelError) {
+    return modelError
+  }
+
+  return `Falha na requisicao (HTTP ${status})`
+}
+
 export async function apiRequest<TResponse = unknown>(
   path: string,
   options: ApiRequestOptions = {},
@@ -52,11 +109,7 @@ export async function apiRequest<TResponse = unknown>(
     const payload = shouldParseJson ? await response.json().catch(() => undefined) : undefined
 
     if (!response.ok) {
-      const message =
-        payload?.message ??
-        payload?.Message ??
-        (typeof payload === "string" ? payload : null) ??
-        `Falha na requisicao (HTTP ${response.status})`
+      const message = buildErrorMessage(payload, response.status)
       throw new Error(message)
     }
 
@@ -70,4 +123,3 @@ export async function apiRequest<TResponse = unknown>(
 }
 
 export { API_BASE_URL }
-
