@@ -22,6 +22,7 @@ type ApiMovie = {
   id: string
   titulo: string
   nota: number | null
+  notaMedia?: number | null
   observacao: string
   dtAnoLancamento: string
   marcadores: string[]
@@ -34,6 +35,11 @@ type ApiMoviePayload = {
   observacao: string
   dtAnoLancamento: string
   marcadores: string[]
+}
+
+type GeneratedDescriptionResponse = {
+  titulo?: string
+  descricaoIA?: string
 }
 
 function isApiMovie(value: unknown): value is ApiMovie {
@@ -61,12 +67,18 @@ function buildReleaseDate(year?: number) {
 }
 
 function mapApiMovie(movie: ApiMovie): Movie {
+  const resolvedRating =
+    typeof movie.notaMedia === "number"
+      ? movie.notaMedia
+      : typeof movie.nota === "number"
+        ? movie.nota
+        : 0
   return {
     id: movie.id,
     title: movie.titulo,
     description: movie.observacao,
     // Safeguard against backend sending null/undefined rating
-    rating: typeof movie.nota === "number" ? movie.nota : 0,
+    rating: resolvedRating,
     tags: movie.marcadores ?? [],
     year: parseYear(movie.dtAnoLancamento),
     releaseDate: movie.dtAnoLancamento,
@@ -131,4 +143,13 @@ export async function deleteMovie(movieId: string, signal?: AbortSignal): Promis
     method: "DELETE",
     signal,
   })
+}
+
+export async function generateMovieDescription(title: string, signal?: AbortSignal): Promise<string> {
+  const query = new URLSearchParams({ titulo: title }).toString()
+  const response = await apiRequest<GeneratedDescriptionResponse>(`/Filme/gerar-descricao?${query}`, {
+    method: "GET",
+    signal,
+  })
+  return response?.descricaoIA?.trim() ?? ""
 }

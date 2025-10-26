@@ -39,7 +39,8 @@ type ApiMovieReview = {
 }
 
 type ApiMovieReviewSummary = {
-  media: number
+  media?: number
+  notaMedia?: number
   totalAvaliacoes?: number
   suaNota?: number
   seuComentario?: string | null
@@ -65,8 +66,14 @@ function mapMovieReview(review: ApiMovieReview): MovieReview {
 
 function mapMovieReviewSummary(summary: ApiMovieReviewSummary): MovieReviewSummary {
   const reviews = summary.avaliacoes?.map(mapMovieReview) ?? []
+  const calculatedMedia =
+    typeof summary.media === "number"
+      ? summary.media
+      : typeof summary.notaMedia === "number"
+        ? summary.notaMedia
+        : 0
   return {
-    media: typeof summary.media === "number" ? summary.media : 0,
+    media: calculatedMedia,
     totalAvaliacoes: summary.totalAvaliacoes ?? reviews.length,
     suaNota: summary.suaNota ?? 0,
     seuComentario: summary.seuComentario ?? null,

@@ -4,7 +4,7 @@ import { FiArrowLeft } from "react-icons/fi"
 import { Link, Navigate, useNavigate } from "react-router-dom"
 import { NoteItem } from "../components/NoteItem"
 import { useUser } from "../contexts/UserContext"
-import { createMovie } from "../services/movies"
+import { createMovie, generateMovieDescription } from "../services/movies"
 
 export function CreateMovie() {
   const { user, hasRole } = useUser()
@@ -17,6 +17,7 @@ export function CreateMovie() {
   const [tags, setTags] = useState<string[]>([])
   const [newTag, setNewTag] = useState("")
   const [saving, setSaving] = useState(false)
+  const [generatingDescription, setGeneratingDescription] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   if (!user) {
@@ -68,6 +69,30 @@ export function CreateMovie() {
     setError(null)
   }
 
+  async function handleGenerateDescription() {
+    if (!title.trim()) {
+      setError("Informe um titulo para gerar a descricao automaticamente")
+      return
+    }
+
+    setGeneratingDescription(true)
+    setError(null)
+    try {
+      const generatedDescription = await generateMovieDescription(title.trim())
+      if (!generatedDescription) {
+        setError("Nao foi possivel gerar a descricao automaticamente")
+        return
+      }
+      setDescription(generatedDescription)
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Nao foi possivel gerar a descricao automaticamente",
+      )
+    } finally {
+      setGeneratingDescription(false)
+    }
+  }
+
   return (
     <div className="px-32 py-10">
       <Link
@@ -78,7 +103,17 @@ export function CreateMovie() {
         Voltar
       </Link>
 
-      <h1 className="mt-6 font-secondary text-4xl font-bold text-white">Novo filme</h1>
+      <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <h1 className="font-secondary text-4xl font-bold text-white">Novo filme</h1>
+        <button
+          className="h-12 w-full rounded-lg border border-[#FF859B] px-6 text-sm font-medium text-[#FF859B] transition hover:bg-[#FF859B]/10 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+          onClick={handleGenerateDescription}
+          type="button"
+          disabled={generatingDescription || saving || !title.trim()}
+        >
+          {generatingDescription ? "Gerando descricao..." : "Gerar descricao com IA"}
+        </button>
+      </div>
 
       <form className="mt-10" onSubmit={(event) => event.preventDefault()}>
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">

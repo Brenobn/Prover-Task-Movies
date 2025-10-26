@@ -15,8 +15,11 @@ export function StarRating({
   allowHalf = true,
   onChange,
 }: StarRatingProps) {
+  const starKey = editable ? `editable-${value}` : `readonly-${value}`
+
   return (
     <ReactStars
+      key={starKey}
       count={5}
       value={value}
       size={size}

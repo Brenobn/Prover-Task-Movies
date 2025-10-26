@@ -46,6 +46,7 @@ export function Details() {
   const isAdmin = hasRole("Admin")
   const totalCommunityReviews =
     reviewsSummary?.totalAvaliacoes ?? reviewsSummary?.avaliacoes.length ?? 0
+  const averageRating = reviewsSummary?.media ?? movie?.rating ?? 0
 
   const loadReviews = useCallback(
     async (abortSignal?: AbortSignal) => {
@@ -183,9 +184,9 @@ export function Details() {
                   {movie.title}
                 </h1>
                 <div className="flex items-center gap-2">
-                  <StarRating value={movie.rating} size={24} />
+                  <StarRating value={averageRating} size={24} />
                   <span className="text-sm font-medium text-[#FF859B]">
-                    {movie.rating.toFixed(1)}
+                    {averageRating.toFixed(1)}
                   </span>
                 </div>
               </div>
