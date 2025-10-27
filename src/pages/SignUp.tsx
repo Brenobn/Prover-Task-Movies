@@ -50,17 +50,17 @@ export function SignUp() {
   return (
     <div className="flex h-screen items-stretch bg-[#1C1B1E]">
       <form
-        className="flex flex-col items-center justify-center gap-5 px-[136px] text-center"
+        className="flex flex-col items-start justify-center gap-5 px-[136px] text-center"
         onSubmit={handleSubmit}
       >
         <h1 className="font-secondary text-5xl font-bold text-[#FF859B]">Movies</h1>
-        <p className="font-secondary text-sm font-normal text-white">
+        <h2 className="font-secondary text-sm font-normal text-[#CAC4CF]">
           Aplicacao para acompanhar tudo que assistir
-        </p>
-
-        <h2 className="mt-12 mb-12 text-sm font-normal text-[#CAC4CF]">
-          Crie sua conta
         </h2>
+
+        <p className="mt-8 mb-8 text-2xl font-secondary font-medium text-white">
+          Crie sua conta
+        </p>
 
         <div className="flex w-full flex-col gap-2">
           <Input
@@ -97,7 +97,7 @@ export function SignUp() {
 
         <Button title={loading ? "Cadastrando..." : "Cadastrar"} type="submit" disabled={loading} />
 
-        <ButtonText icon={FiArrowLeft} title="Voltar para o login" to="/signin" />
+        <ButtonText icon={FiArrowLeft} title="Voltar para o login" to="/signin" className="inline-flex items-center my-0 mx-auto gap-2 border-0 bg-none text-base text-[#FF859B] [&_svg]:text-[#FF859B]" />
       </form>
       <div
         className="flex-1 bg-cover bg-center bg-no-repeat"
