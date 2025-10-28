@@ -79,16 +79,20 @@ export function Perfil() {
   const avatarUrl = avatarPreview ?? currentUser.avatarUrl
 
   return (
-    <div className="px-32 py-10">
-      <Link
-        className="inline-flex items-center gap-2 text-[#FF859B] no-underline"
-        to="/"
-      >
-        <FiArrowLeft />
-        Voltar
-      </Link>
+    <div className="flex min-h-screen flex-col relative">
+      <div className="w-full border border-b border-b-[#3E3B47] bg-[#1C1B1E] px-32 py-11.25">
+        <div className="flex items-center">
+          <Link
+            className="inline-flex items-center gap-2 text-[#FF859B] no-underline"
+            to="/"
+          >
+            <FiArrowLeft />
+            Voltar
+          </Link>
+        </div>
+      </div>
 
-      <div className="mt-6 flex flex-col items-center">
+      <div className="mt-2 flex flex-col items-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
         <div className="relative">
           {/** biome-ignore lint/a11y/useAltText: preview only */}
           {/** biome-ignore lint/nursery/useImageSize: ok */}
@@ -151,6 +155,17 @@ export function Perfil() {
               type="password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
+            />
+          </div>
+
+          <div className="flex items-center gap-2 rounded-xl bg-[#262529] px-4 py-3">
+            <FiLock className="text-[#948F99]" />
+            <input
+              className="w-full bg-transparent text-white placeholder:text-[#948F99] focus:outline-none"
+              placeholder="Confirmar Senha"
+              type="password"
+              // value={confirmPassword}
+              // onChange={(e) => confirmPassword(e.target.value)}
             />
           </div>
 
