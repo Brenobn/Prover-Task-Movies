@@ -85,24 +85,28 @@ export async function fetchCurrentUser(signal?: AbortSignal): Promise<AuthUser |
 }
 
 export type UpdateProfilePayload = {
-  username?: string
-  email?: string
   currentPassword: string
-  newPassword?: string
+  newPassword: string
+  confirmNewPassword: string
 }
 
 export async function updateUserProfile(payload: UpdateProfilePayload): Promise<AuthUser> {
-  if (!payload.currentPassword) {
+  const { currentPassword, newPassword, confirmNewPassword } = payload
+
+  if (!currentPassword) {
     throw new Error("Informe sua senha atual para atualizar o perfil.")
   }
 
-  await apiRequest(`${ACCOUNT_BASE_URL}/update`, {
+  if (!newPassword) {
+    throw new Error("Informe a nova senha para continuar.")
+  }
+
+  await apiRequest(`${ACCOUNT_BASE_URL}/update-account`, {
     method: "PUT",
     json: {
-      username: payload.username,
-      email: payload.email,
-      currentPassword: payload.currentPassword,
-      newPassword: payload.newPassword,
+      CurrentPassword: currentPassword,
+      NewPassword: newPassword,
+      ConfirmNewPassword: confirmNewPassword,
     },
   })
 

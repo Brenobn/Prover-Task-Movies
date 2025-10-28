@@ -6,27 +6,23 @@ import { updateUserProfile } from "../services/auth"
 
 export function Perfil() {
   const { user, setUser } = useUser()
-  const [name, setName] = useState("")
-  const [email, setEmail] = useState("")
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null)
   const [currentPassword, setCurrentPassword] = useState("")
   const [newPassword, setNewPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
   const [saving, setSaving] = useState(false)
   const [feedback, setFeedback] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const fileRef = useRef<HTMLInputElement | null>(null)
 
   useEffect(() => {
-    if (user) {
-      setName(user.username)
-      setEmail(user.email ?? "")
-      setAvatarPreview(null)
-      setCurrentPassword("")
-      setNewPassword("")
-      setFeedback(null)
-      setError(null)
-    }
-  }, [user])
+    setAvatarPreview(null)
+    setCurrentPassword("")
+    setNewPassword("")
+    setConfirmPassword("")
+    setFeedback(null)
+    setError(null)
+  }, [user?.id])
 
   if (!user) {
     return <Navigate to="/signin" replace />
@@ -57,18 +53,28 @@ export function Perfil() {
       return
     }
 
+    if (!newPassword.trim()) {
+      setError("Informe a nova senha para continuar.")
+      return
+    }
+
+    if (newPassword !== confirmPassword) {
+      setError("A nova senha e a confirmacao devem ser iguais.")
+      return
+    }
+
     setSaving(true)
     try {
       const updated = await updateUserProfile({
-        username: name,
-        email,
         currentPassword,
-        newPassword: newPassword || undefined,
+        newPassword,
+        confirmNewPassword: confirmPassword,
       })
       setUser(updated)
-      setFeedback("Dados atualizados com sucesso")
+      setFeedback("Senha atualizada com sucesso")
       setCurrentPassword("")
       setNewPassword("")
+      setConfirmPassword("")
     } catch (err) {
       setError(err instanceof Error ? err.message : "Nao foi possivel atualizar")
     } finally {
@@ -118,22 +124,16 @@ export function Perfil() {
         <div className="mt-8 flex w-[380px] flex-col gap-4">
           <div className="flex items-center gap-2 rounded-xl bg-[#262529] px-4 py-3">
             <FiUser className="text-[#948F99]" />
-            <input
-              className="w-full bg-transparent text-white placeholder:text-[#948F99] focus:outline-none"
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Seu nome de usuario"
-              value={name}
-            />
+            <span className="w-full overflow-hidden text-ellipsis whitespace-nowrap text-white">
+              {currentUser.username}
+            </span>
           </div>
 
           <div className="flex items-center gap-2 rounded-xl bg-[#262529] px-4 py-3">
             <FiMail className="text-[#948F99]" />
-            <input
-              className="w-full bg-transparent text-white placeholder:text-[#948F99] focus:outline-none"
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Seu email"
-              value={email}
-            />
+            <span className="w-full overflow-hidden text-ellipsis whitespace-nowrap text-white">
+              {currentUser.email ?? "Email nao informado"}
+            </span>
           </div>
 
           <div className="flex items-center gap-2 rounded-xl bg-[#262529] px-4 py-3">
@@ -164,8 +164,8 @@ export function Perfil() {
               className="w-full bg-transparent text-white placeholder:text-[#948F99] focus:outline-none"
               placeholder="Confirmar Senha"
               type="password"
-              // value={confirmPassword}
-              // onChange={(e) => confirmPassword(e.target.value)}
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
             />
           </div>
 
