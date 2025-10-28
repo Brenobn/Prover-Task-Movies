@@ -8,6 +8,24 @@ import { Input } from "../components/Input"
 import { useUser } from "../contexts/UserContext"
 import { registerUser } from "../services/auth"
 
+const PASSWORD_REQUIREMENTS = [
+  {
+    test: (value: string) => /[A-Z]/.test(value),
+    label: "Letra maiuscula",
+    errorFragment: "uma letra maiuscula",
+  },
+  {
+    test: (value: string) => /[0-9]/.test(value),
+    label: "Numero",
+    errorFragment: "um numero",
+  },
+  {
+    test: (value: string) => /[^A-Za-z0-9]/.test(value),
+    label: "Caractere especial",
+    errorFragment: "um caractere especial",
+  },
+]
+
 export function SignUp() {
   const { user } = useUser()
   const navigate = useNavigate()
@@ -31,6 +49,13 @@ export function SignUp() {
       return
     }
 
+    const missingRequirements = PASSWORD_REQUIREMENTS.filter((rule) => !rule.test(password))
+    if (missingRequirements.length > 0) {
+      const details = missingRequirements.map((rule) => rule.errorFragment).join(", ")
+      setError(`A senha deve conter ${details}.`)
+      return
+    }
+
     if (password !== confirmPassword) {
       setError("As senhas nao conferem")
       return
@@ -41,7 +66,13 @@ export function SignUp() {
       await registerUser({ username, email, password, confirmPassword })
       navigate("/signin", { replace: true })
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Nao foi possivel cadastrar")
+      if (err instanceof Error) {
+        setError(err.message)
+      } else if (typeof err === "string") {
+        setError(err)
+      } else {
+        setError("Nao foi possivel cadastrar")
+      }
     } finally {
       setLoading(false)
     }
@@ -93,7 +124,7 @@ export function SignUp() {
           />
         </div>
 
-        {error ? <p className="text-sm text-red-400">{error}</p> : null}
+        {error ? <p className="text-sm text-red-400 whitespace-pre-line">{error}</p> : null}
 
         <Button title={loading ? "Cadastrando..." : "Cadastrar"} type="submit" disabled={loading} />
 
