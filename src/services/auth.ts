@@ -85,13 +85,31 @@ export async function fetchCurrentUser(signal?: AbortSignal): Promise<AuthUser |
 }
 
 export type UpdateProfilePayload = {
-  displayName?: string
+  username?: string
   email?: string
-  avatarUrl?: string
-  currentPassword?: string
+  currentPassword: string
   newPassword?: string
 }
 
-export async function updateUserProfile(_: UpdateProfilePayload): Promise<AuthUser> {
-  throw new Error("Endpoint de atualizacao de perfil ainda nao foi implementado no backend.")
+export async function updateUserProfile(payload: UpdateProfilePayload): Promise<AuthUser> {
+  if (!payload.currentPassword) {
+    throw new Error("Informe sua senha atual para atualizar o perfil.")
+  }
+
+  await apiRequest(`${ACCOUNT_BASE_URL}/update`, {
+    method: "PUT",
+    json: {
+      username: payload.username,
+      email: payload.email,
+      currentPassword: payload.currentPassword,
+      newPassword: payload.newPassword,
+    },
+  })
+
+  const refreshedUser = await fetchCurrentUser()
+  if (!refreshedUser) {
+    throw new Error("Perfil atualizado, mas nao foi possivel carregar os dados do usuario.")
+  }
+
+  return refreshedUser
 }
