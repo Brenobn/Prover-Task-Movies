@@ -56,9 +56,9 @@ export function Header() {
   return (
     <div className="flex w-full justify-between border border-b border-b-[#3E3B47] bg-[#1C1B1E] px-32 py-6">
       <div className="flex w-full items-center gap-16 px-[70px] py-6">
-        <h1 className="font-bold font-secondary text-2xl text-[#FF859B]">
+        <Link to="/" className="font-bold font-secondary text-2xl text-[#FF859B]">
           Movies
-        </h1>
+        </Link>
         <div className="relative w-full">
           <Input
             value={searchTerm}
