@@ -169,7 +169,7 @@ export function Details() {
   return (
     <div className="mx-auto my-10 flex max-w-6xl flex-col gap-10">
       <div className="flex items-center gap-2">
-        <ButtonText title="Voltar" icon={GoArrowLeft} to="/" />
+        <ButtonText className="inline-flex items-center text-[#FF859B] gap-1" title="Voltar" icon={GoArrowLeft} to="/" />
       </div>
 
       {loading && <p className="font-primary text-base text-[#999591]">Carregando filme...</p>}
@@ -204,7 +204,7 @@ export function Details() {
                   Editar filme
                 </Link>
                 <button
-                  className="inline-flex h-11 items-center justify-center rounded-lg bg-red-500 px-6 font-medium text-white transition hover:bg-red-600"
+                  className="inline-flex h-11 items-center justify-center rounded-lg bg-[#0D0C0F] px-6 font-medium text-[#FF859B] transition hover:bg-red-500 hover:text-[#312e38] border border-[#FF859B]"
                   type="button"
                   onClick={() => setShowDeleteConfirm(true)}
                 >
