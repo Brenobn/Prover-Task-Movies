@@ -34,7 +34,7 @@ export function Home() {
   return (
     <div className="px-20 py-12">
       <div className="mx-auto flex w-full max-w-7xl items-center justify-between">
-        <h1 className="font-normal font-secondary text-3xl text-white">Meus Filmes</h1>
+        <h1 className="font-normal font-secondary text-3xl text-white">Filmes</h1>
 
         {isAdmin && (
           <Link
